@@ -1,500 +1,328 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HelpToDo.us - Free File & Conversion Tools</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+import React, { useState } from 'react';
+import { Upload, FileText, Scissors, Maximize2, Lock, Unlock, Image, Shuffle, RotateCw, Moon, Sun, Download, Trash2, Shield, FileImage, Files, Palette, FileCheck, Grid, Zap, Printer, Edit3, Type, Bookmark, Eye, EyeOff, Copy } from 'lucide-react';
 
-        body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #f5f7fa;
-            color: #2d3748;
-            line-height: 1.6;
-        }
+export default function PDFToolsWebsite() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragActive, setDragActive] = useState(false);
 
-        .hero {
-            background: linear-gradient(to bottom, #ffffff 0%, #f5f7fa 100%);
-            padding: 80px 20px 60px;
-            text-align: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
+  const toolCategories = [
+    {
+      category: "Convert PDF",
+      tools: [
+        { icon: FileText, name: 'PDF to Word', desc: 'Convert PDF to DOCX format', color: 'from-blue-500 to-cyan-500' },
+        { icon: FileText, name: 'PDF to Excel', desc: 'Convert PDF to XLSX format', color: 'from-green-500 to-emerald-500' },
+        { icon: FileText, name: 'PDF to PowerPoint', desc: 'Convert PDF to PPTX format', color: 'from-orange-500 to-red-500' },
+        { icon: Image, name: 'PDF to JPG', desc: 'Convert PDF pages to JPG images', color: 'from-indigo-500 to-blue-500' },
+        { icon: FileImage, name: 'PDF to PNG', desc: 'Convert PDF pages to PNG images', color: 'from-pink-500 to-rose-500' },
+        { icon: FileImage, name: 'PDF to BMP', desc: 'Convert PDF pages to BMP images', color: 'from-purple-500 to-indigo-500' },
+        { icon: FileImage, name: 'PDF to TIFF', desc: 'Convert PDF pages to TIFF images', color: 'from-cyan-500 to-blue-500' },
+        { icon: FileText, name: 'PDF to TXT', desc: 'Extract text from PDF', color: 'from-violet-500 to-purple-500' },
+      ]
+    },
+    {
+      category: "Convert to PDF",
+      tools: [
+        { icon: FileText, name: 'Word to PDF', desc: 'Convert DOCX to PDF', color: 'from-blue-600 to-cyan-600' },
+        { icon: FileText, name: 'Excel to PDF', desc: 'Convert XLSX to PDF', color: 'from-green-600 to-emerald-600' },
+        { icon: FileText, name: 'PowerPoint to PDF', desc: 'Convert PPTX to PDF', color: 'from-orange-600 to-red-600' },
+        { icon: Image, name: 'JPG to PDF', desc: 'Convert JPG images to PDF', color: 'from-indigo-600 to-blue-600' },
+        { icon: FileImage, name: 'PNG to PDF', desc: 'Convert PNG images to PDF', color: 'from-pink-600 to-rose-600' },
+        { icon: FileImage, name: 'BMP to PDF', desc: 'Convert BMP images to PDF', color: 'from-purple-600 to-indigo-600' },
+        { icon: FileImage, name: 'TIFF to PDF', desc: 'Convert TIFF images to PDF', color: 'from-cyan-600 to-blue-600' },
+        { icon: FileText, name: 'TXT to PDF', desc: 'Convert text files to PDF', color: 'from-violet-600 to-purple-600' },
+      ]
+    },
+    {
+      category: "Edit & Organize",
+      tools: [
+        { icon: Files, name: 'Merge PDF', desc: 'Combine multiple PDFs into one', color: 'from-blue-500 to-purple-500' },
+        { icon: Scissors, name: 'Split PDF', desc: 'Split PDF into multiple files', color: 'from-purple-500 to-pink-500' },
+        { icon: RotateCw, name: 'Rotate PDF', desc: 'Rotate pages in your PDF', color: 'from-orange-500 to-yellow-500' },
+        { icon: Shuffle, name: 'Organize PDF', desc: 'Rearrange and sort PDF pages', color: 'from-teal-500 to-cyan-500' },
+        { icon: Trash2, name: 'Remove Pages', desc: 'Delete unwanted pages from PDF', color: 'from-red-500 to-pink-500' },
+        { icon: Maximize2, name: 'Extract Pages', desc: 'Extract specific pages from PDF', color: 'from-lime-500 to-green-500' },
+        { icon: Copy, name: 'Split by Range', desc: 'Split PDF by page ranges', color: 'from-indigo-500 to-purple-500' },
+      ]
+    },
+    {
+      category: "Optimize & Compress",
+      tools: [
+        { icon: Zap, name: 'Compress PDF', desc: 'Reduce PDF file size', color: 'from-green-500 to-teal-500' },
+        { icon: FileCheck, name: 'Repair PDF', desc: 'Fix corrupted PDF files', color: 'from-blue-500 to-indigo-500' },
+        { icon: Palette, name: 'Grayscale PDF', desc: 'Convert to black and white', color: 'from-gray-500 to-gray-700' },
+      ]
+    },
+    {
+      category: "Security & Privacy",
+      tools: [
+        { icon: Lock, name: 'Protect PDF', desc: 'Add password protection', color: 'from-red-500 to-orange-500' },
+        { icon: Unlock, name: 'Unlock PDF', desc: 'Remove PDF password', color: 'from-yellow-500 to-amber-500' },
+        { icon: Shield, name: 'Sign PDF', desc: 'Add digital signature', color: 'from-blue-500 to-cyan-500' },
+        { icon: EyeOff, name: 'Redact PDF', desc: 'Remove sensitive information', color: 'from-red-600 to-pink-600' },
+      ]
+    },
+    {
+      category: "Other Tools",
+      tools: [
+        { icon: Eye, name: 'View PDF', desc: 'View PDF in browser', color: 'from-blue-400 to-cyan-400' },
+        { icon: Printer, name: 'Print PDF', desc: 'Print PDF documents', color: 'from-gray-600 to-gray-800' },
+        { icon: Download, name: 'PDF to ZIP', desc: 'Convert PDF pages to ZIP', color: 'from-purple-400 to-pink-400' },
+        { icon: Type, name: 'Add Watermark', desc: 'Add text or image watermark', color: 'from-indigo-400 to-blue-400' },
+        { icon: Edit3, name: 'Edit PDF', desc: 'Edit PDF text and images', color: 'from-green-400 to-teal-400' },
+        { icon: Bookmark, name: 'Add Bookmarks', desc: 'Add bookmarks to PDF', color: 'from-orange-400 to-red-400' },
+        { icon: Grid, name: 'PDF Grid View', desc: 'View all pages as grid', color: 'from-cyan-400 to-blue-400' },
+      ]
+    }
+  ];
 
-        .brand {
-            font-size: 3.5em;
-            font-weight: 900;
-            color: #1a202c;
-            margin-bottom: 20px;
-            letter-spacing: -3px;
-        }
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
 
-        .brand span {
-            color: #3182ce;
-        }
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFile(e.dataTransfer.files[0]);
+    }
+  };
 
-        .subtitle {
-            font-size: 1.5em;
-            color: #718096;
-            font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
-
-        .main-card {
-            background: white;
-            border-radius: 24px;
-            padding: 60px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 10px 20px rgba(0,0,0,0.03);
-            margin-bottom: 60px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .drop-zone {
-            border: 3px dashed #cbd5e0;
-            border-radius: 16px;
-            padding: 80px 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            background: #fafbfc;
-        }
-
-        .drop-zone:hover {
-            border-color: #3182ce;
-            background: #f7fafc;
-        }
-
-        .drop-zone.dragover {
-            border-color: #3182ce;
-            background: #ebf8ff;
-        }
-
-        .drop-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 30px;
-            background: linear-gradient(135deg, #667eea 0%, #3182ce 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3em;
-        }
-
-        .drop-zone h2 {
-            font-size: 2.2em;
-            color: #1a202c;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .drop-zone p {
-            color: #718096;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-        }
-
-        .upload-btn {
-            background: #3182ce;
-            color: white;
-            border: none;
-            padding: 16px 48px;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .upload-btn:hover {
-            background: #2c5282;
-            transform: translateY(-2px);
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin: 60px 0;
-        }
-
-        .feature-box {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            background: #ebf8ff;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5em;
-        }
-
-        .feature-box h3 {
-            font-size: 1.3em;
-            color: #1a202c;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .feature-box p {
-            color: #718096;
-            font-size: 1em;
-        }
-
-        .tools-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .tools-header h2 {
-            font-size: 2.8em;
-            color: #1a202c;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-
-        .tools-header p {
-            color: #718096;
-            font-size: 1.2em;
-        }
-
-        .tools-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .tool-item {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 35px 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tool-item:hover {
-            border-color: #3182ce;
-            box-shadow: 0 8px 30px rgba(49, 130, 206, 0.15);
-            transform: translateY(-4px);
-        }
-
-        .tool-icon-box {
-            width: 60px;
-            height: 60px;
-            background: #ebf8ff;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2em;
-            margin-bottom: 20px;
-        }
-
-        .tool-item h3 {
-            font-size: 1.4em;
-            color: #1a202c;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .tool-item p {
-            color: #718096;
-            font-size: 1em;
-            line-height: 1.6;
-        }
-
-        .file-list {
-            margin-top: 40px;
-        }
-
-        .file-card {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px 25px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-        }
-
-        .file-card:hover {
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .file-details {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .file-ext {
-            width: 50px;
-            height: 50px;
-            background: #3182ce;
-            color: white;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85em;
-        }
-
-        .file-meta h4 {
-            color: #1a202c;
-            font-size: 1.05em;
-            font-weight: 600;
-            margin-bottom: 3px;
-        }
-
-        .file-size {
-            color: #718096;
-            font-size: 0.9em;
-        }
-
-        .delete-btn {
-            background: transparent;
-            color: #e53e3e;
-            border: 2px solid #feb2b2;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .delete-btn:hover {
-            background: #e53e3e;
-            color: white;
-            border-color: #e53e3e;
-        }
-
-        footer {
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            padding: 50px 20px;
-            text-align: center;
-            color: #718096;
-            margin-top: 80px;
-        }
-
-        footer h3 {
-            color: #1a202c;
-            font-size: 1.8em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        @media (max-width: 768px) {
-            .brand {
-                font-size: 2.5em;
-            }
-
-            .main-card {
-                padding: 30px 20px;
-            }
-
-            .drop-zone {
-                padding: 50px 20px;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .tools-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="hero">
-        <h1 class="brand">Help<span>ToDo</span></h1>
-        <p class="subtitle">Professional file conversion tools. Simple, fast, and completely free.</p>
-    </div>
-
-    <div class="container">
-        <div class="features">
-            <div class="feature-box">
-                <div class="feature-icon">🔐</div>
-                <h3>Secure</h3>
-                <p>Files stay in your browser</p>
+  return (
+    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'}`}>
+      {/* Header */}
+      <header className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white/80 backdrop-blur-lg border-gray-200'} border-b sticky top-0 z-50 shadow-sm`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg transform hover:rotate-12 transition-transform">
+              <FileText className="w-6 h-6 text-white" />
             </div>
-            <div class="feature-box">
-                <div class="feature-icon">⚡</div>
-                <h3>Lightning Fast</h3>
-                <p>Process files instantly</p>
+            <div>
+              <h1 className={`text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}>
+                HelpToDo PDF
+              </h1>
+              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>35+ Professional Tools</p>
             </div>
-            <div class="feature-box">
-                <div class="feature-icon">💎</div>
-                <h3>No Limits</h3>
-                <p>Unlimited conversions</p>
-            </div>
+          </div>
+          
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className={`p-2 rounded-lg transition-all hover:scale-110 ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-700'}`}
+          >
+            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
         </div>
+      </header>
 
-        <div class="main-card">
-            <div class="drop-zone" id="uploadArea">
-                <div class="drop-icon">📂</div>
-                <h2>Drag & Drop Files</h2>
-                <p>or click the button below to browse</p>
-                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                    Choose Files
-                </button>
-                <input type="file" id="fileInput" class="file-input" multiple>
-            </div>
-            <div class="file-list" id="fileList"></div>
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <div className="inline-block">
+          <div className={`inline-block px-4 py-2 rounded-full mb-4 ${darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'} text-sm font-medium animate-pulse`}>
+            ✨ 100% Free • No Sign Up • Secure
+          </div>
         </div>
+        
+        <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          Every PDF Tool You'll
+          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"> Ever Need</span>
+        </h2>
+        
+        <p className={`text-lg mb-10 max-w-2xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          35+ powerful tools to convert, edit, compress, merge, split and secure your PDF files. All processing happens in your browser for maximum privacy.
+        </p>
 
-        <div class="tools-header">
-            <h2>Available Tools</h2>
-            <p>Everything you need to work with files</p>
+        {/* Upload Area */}
+        <div
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+          className={`max-w-2xl mx-auto mb-12 transition-all duration-300 ${
+            dragActive ? 'scale-105' : 'scale-100'
+          }`}
+        >
+          <label className={`block cursor-pointer ${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-10 border-2 border-dashed transition-all hover:shadow-2xl ${
+            dragActive 
+              ? 'border-blue-500 shadow-2xl' 
+              : darkMode ? 'border-gray-700' : 'border-gray-300'
+          }`}>
+            <input
+              type="file"
+              className="hidden"
+              onChange={handleFileChange}
+              accept=".pdf,image/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+            />
+            
+            <div className="flex flex-col items-center gap-3">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center ${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} transition-transform ${dragActive ? 'scale-110 rotate-12' : 'scale-100'}`}>
+                <Upload className={`w-8 h-8 ${darkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+              </div>
+              
+              {selectedFile ? (
+                <div className="text-center">
+                  <p className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    📄 {selectedFile.name}
+                  </p>
+                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • Ready to process
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className={`text-lg font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Click to upload or drag and drop
+                  </p>
+                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    PDF, Word, Excel, PowerPoint, Images (Max 100MB)
+                  </p>
+                </div>
+              )}
+            </div>
+          </label>
         </div>
+      </section>
 
-        <div class="tools-layout">
-            <div class="tool-item">
-                <div class="tool-icon-box">📄</div>
-                <h3>PDF Tools</h3>
-                <p>Merge, split, compress, and convert PDF documents with ease.</p>
-            </div>
-
-            <div class="tool-item">
-                <div class="tool-icon-box">🖼️</div>
-                <h3>Image Tools</h3>
-                <p>Convert, resize, compress, and edit images in any format.</p>
-            </div>
-
-            <div class="tool-item">
-                <div class="tool-icon-box">📊</div>
-                <h3>Document Tools</h3>
-                <p>Work with Word, Excel, PowerPoint, and other documents.</p>
-            </div>
-
-            <div class="tool-item">
-                <div class="tool-icon-box">🎥</div>
-                <h3>Video Tools</h3>
-                <p>Convert video formats, compress, and extract audio.</p>
-            </div>
-
-            <div class="tool-item">
-                <div class="tool-icon-box">🎵</div>
-                <h3>Audio Tools</h3>
-                <p>Convert audio files between different formats quickly.</p>
-            </div>
-
-            <div class="tool-item">
-                <div class="tool-icon-box">📝</div>
-                <h3>Text Tools</h3>
-                <p>Encode, decode, format, and transform text content.</p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <h3>HelpToDo.us</h3>
-        <p>Free file conversion tools for everyone</p>
-        <p style="margin-top: 10px;">Your privacy is our priority. All processing happens locally.</p>
-    </footer>
-
-    <script>
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('fileInput');
-        const fileList = document.getElementById('fileList');
-        let files = [];
-
-        uploadArea.addEventListener('click', (e) => {
-            if (e.target.classList.contains('upload-btn')) return;
-            fileInput.click();
-        });
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        function handleFiles(newFiles) {
-            files = [...files, ...Array.from(newFiles)];
-            displayFiles();
-        }
-
-        function displayFiles() {
-            if (files.length === 0) {
-                fileList.innerHTML = '';
-                return;
-            }
-
-            fileList.innerHTML = '';
-            files.forEach((file, index) => {
-                const ext = file.name.split('.').pop().toUpperCase().substring(0, 3);
-                const fileCard = document.createElement('div');
-                fileCard.className = 'file-card';
-                fileCard.innerHTML = `
-                    <div class="file-details">
-                        <div class="file-ext">${ext}</div>
-                        <div class="file-meta">
-                            <h4>${file.name}</h4>
-                            <div class="file-size">${formatFileSize(file.size)}</div>
-                        </div>
+      {/* All Tools by Category */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        {toolCategories.map((category, catIndex) => (
+          <div key={catIndex} className="mb-12">
+            <h3 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'} flex items-center gap-2`}>
+              <span className="w-1 h-8 bg-gradient-to-b from-blue-600 to-purple-600 rounded-full"></span>
+              {category.category}
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {category.tools.map((tool, index) => (
+                <button
+                  key={index}
+                  className={`group ${darkMode ? 'bg-gray-800 hover:bg-gray-750' : 'bg-white hover:shadow-xl'} rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 border ${darkMode ? 'border-gray-700 hover:border-gray-600' : 'border-gray-200 hover:border-gray-300'} text-left`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${tool.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md`}>
+                      <tool.icon className="w-6 h-6 text-white" />
                     </div>
-                    <button class="delete-btn" onclick="removeFile(${index})">Delete</button>
-                `;
-                fileList.appendChild(fileCard);
-            });
-        }
+                    
+                    <div className="flex-1 min-w-0">
+                      <h4 className={`font-semibold text-base mb-1 ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                        {tool.name}
+                      </h4>
+                      
+                      <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2`}>
+                        {tool.desc}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
 
-        function removeFile(index) {
-            files.splice(index, 1);
-            displayFiles();
-        }
+      {/* Stats Section */}
+      <section className={`${darkMode ? 'bg-gray-800' : 'bg-gradient-to-r from-blue-600 to-purple-600'} py-16`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8 text-center text-white">
+            <div>
+              <div className="text-4xl font-bold mb-2">35+</div>
+              <p className="text-blue-100">PDF Tools</p>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">100%</div>
+              <p className="text-blue-100">Free Forever</p>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">🔒</div>
+              <p className="text-blue-100">Secure & Private</p>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">⚡</div>
+              <p className="text-blue-100">Lightning Fast</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-    </script>
-</body>
-</html>
+      {/* Features */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mb-4">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              Privacy First
+            </h3>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              All files are processed locally in your browser. Your documents never leave your device.
+            </p>
+          </div>
+
+          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              Super Fast
+            </h3>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Instant processing with no waiting. Handle multiple files simultaneously with ease.
+            </p>
+          </div>
+
+          <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
+              <Files className="w-6 h-6 text-white" />
+            </div>
+            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              All Formats
+            </h3>
+            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Support for PDF, Word, Excel, PowerPoint, and all major image formats.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t py-8 mt-8`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                HelpToDo PDF Tools
+              </span>
+            </div>
+            
+            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              © 2025 HelpToDo. All rights reserved. Privacy-first PDF processing.
+            </p>
+            
+            <div className="flex gap-4 text-sm">
+              <a href="#" className={`hover:underline ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Privacy</a>
+              <a href="#" className={`hover:underline ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Terms</a>
+              <a href="#" className={`hover:underline ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Contact</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
