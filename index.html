@@ -1,390 +1,552 @@
-import React, { useState } from 'react';
-import { Upload, FileText, Scissors, Maximize2, Lock, Unlock, Image, Shuffle, RotateCw, Moon, Sun, Download, Trash2, Shield, FileImage, Files, Palette, FileCheck, Grid, Zap, Printer, Edit3, Type, Bookmark, Eye, EyeOff, Copy } from 'lucide-react';
-
-export default function PDFToolsWebsite() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [dragActive, setDragActive] = useState(false);
-
-  const toolCategories = [
-    {
-      category: "Convert PDF",
-      tools: [
-        { icon: FileText, name: 'PDF to Word', desc: 'Convert PDF to DOCX format', color: 'from-blue-500 to-cyan-500' },
-        { icon: FileText, name: 'PDF to Excel', desc: 'Convert PDF to XLSX format', color: 'from-green-500 to-emerald-500' },
-        { icon: FileText, name: 'PDF to PowerPoint', desc: 'Convert PDF to PPTX format', color: 'from-orange-500 to-red-500' },
-        { icon: Image, name: 'PDF to JPG', desc: 'Convert PDF pages to JPG images', color: 'from-indigo-500 to-blue-500' },
-        { icon: FileImage, name: 'PDF to PNG', desc: 'Convert PDF pages to PNG images', color: 'from-pink-500 to-rose-500' },
-        { icon: FileImage, name: 'PDF to BMP', desc: 'Convert PDF pages to BMP images', color: 'from-purple-500 to-indigo-500' },
-        { icon: FileImage, name: 'PDF to TIFF', desc: 'Convert PDF pages to TIFF images', color: 'from-cyan-500 to-blue-500' },
-        { icon: FileText, name: 'PDF to TXT', desc: 'Extract text from PDF', color: 'from-violet-500 to-purple-500' },
-      ]
-    },
-    {
-      category: "Convert to PDF",
-      tools: [
-        { icon: FileText, name: 'Word to PDF', desc: 'Convert DOCX to PDF', color: 'from-blue-600 to-cyan-600' },
-        { icon: FileText, name: 'Excel to PDF', desc: 'Convert XLSX to PDF', color: 'from-green-600 to-emerald-600' },
-        { icon: FileText, name: 'PowerPoint to PDF', desc: 'Convert PPTX to PDF', color: 'from-orange-600 to-red-600' },
-        { icon: Image, name: 'JPG to PDF', desc: 'Convert JPG images to PDF', color: 'from-indigo-600 to-blue-600' },
-        { icon: FileImage, name: 'PNG to PDF', desc: 'Convert PNG images to PDF', color: 'from-pink-600 to-rose-600' },
-        { icon: FileImage, name: 'BMP to PDF', desc: 'Convert BMP images to PDF', color: 'from-purple-600 to-indigo-600' },
-        { icon: FileImage, name: 'TIFF to PDF', desc: 'Convert TIFF images to PDF', color: 'from-cyan-600 to-blue-600' },
-        { icon: FileText, name: 'TXT to PDF', desc: 'Convert text files to PDF', color: 'from-violet-600 to-purple-600' },
-      ]
-    },
-    {
-      category: "Edit & Organize",
-      tools: [
-        { icon: Files, name: 'Merge PDF', desc: 'Combine multiple PDFs into one', color: 'from-blue-500 to-purple-500' },
-        { icon: Scissors, name: 'Split PDF', desc: 'Split PDF into multiple files', color: 'from-purple-500 to-pink-500' },
-        { icon: RotateCw, name: 'Rotate PDF', desc: 'Rotate pages in your PDF', color: 'from-orange-500 to-yellow-500' },
-        { icon: Shuffle, name: 'Organize PDF', desc: 'Rearrange and sort PDF pages', color: 'from-teal-500 to-cyan-500' },
-        { icon: Trash2, name: 'Remove Pages', desc: 'Delete unwanted pages from PDF', color: 'from-red-500 to-pink-500' },
-        { icon: Maximize2, name: 'Extract Pages', desc: 'Extract specific pages from PDF', color: 'from-lime-500 to-green-500' },
-        { icon: Copy, name: 'Split by Range', desc: 'Split PDF by page ranges', color: 'from-indigo-500 to-purple-500' },
-      ]
-    },
-    {
-      category: "Optimize & Compress",
-      tools: [
-        { icon: Zap, name: 'Compress PDF', desc: 'Reduce PDF file size', color: 'from-green-500 to-teal-500' },
-        { icon: FileCheck, name: 'Repair PDF', desc: 'Fix corrupted PDF files', color: 'from-blue-500 to-indigo-500' },
-        { icon: Palette, name: 'Grayscale PDF', desc: 'Convert to black and white', color: 'from-gray-500 to-gray-700' },
-      ]
-    },
-    {
-      category: "Security & Privacy",
-      tools: [
-        { icon: Lock, name: 'Protect PDF', desc: 'Add password protection', color: 'from-red-500 to-orange-500' },
-        { icon: Unlock, name: 'Unlock PDF', desc: 'Remove PDF password', color: 'from-yellow-500 to-amber-500' },
-        { icon: Shield, name: 'Sign PDF', desc: 'Add digital signature', color: 'from-blue-500 to-cyan-500' },
-        { icon: EyeOff, name: 'Redact PDF', desc: 'Remove sensitive information', color: 'from-red-600 to-pink-600' },
-      ]
-    },
-    {
-      category: "Other Tools",
-      tools: [
-        { icon: Eye, name: 'View PDF', desc: 'View PDF in browser', color: 'from-blue-400 to-cyan-400' },
-        { icon: Printer, name: 'Print PDF', desc: 'Print PDF documents', color: 'from-gray-600 to-gray-800' },
-        { icon: Download, name: 'PDF to ZIP', desc: 'Convert PDF pages to ZIP', color: 'from-purple-400 to-pink-400' },
-        { icon: Type, name: 'Add Watermark', desc: 'Add text or image watermark', color: 'from-indigo-400 to-blue-400' },
-        { icon: Edit3, name: 'Edit PDF', desc: 'Edit PDF text and images', color: 'from-green-400 to-teal-400' },
-        { icon: Bookmark, name: 'Add Bookmarks', desc: 'Add bookmarks to PDF', color: 'from-orange-400 to-red-400' },
-        { icon: Grid, name: 'PDF Grid View', desc: 'View all pages as grid', color: 'from-cyan-400 to-blue-400' },
-      ]
-    }
-  ];
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpToDo - Professional PDF Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .gradient-text {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tool-card {
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-8px);
+        }
+        .upload-area {
+            transition: all 0.3s ease;
+        }
+        .upload-area.drag-active {
+            transform: scale(1.05);
+            border-color: #8b5cf6;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+        .pulse-dot::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+            animation: pulse-ring 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
     
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setSelectedFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  return (
-    <div className={`min-h-screen transition-colors duration-500 ${darkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50'}`}>
-      {/* Header */}
-      <header className={`${darkMode ? 'bg-gray-900/95 border-gray-700' : 'bg-white/90 backdrop-blur-xl border-white/20'} border-b sticky top-0 z-50 shadow-lg`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-75"></div>
-              <div className="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl transform hover:rotate-12 hover:scale-110 transition-all duration-300">
-                <FileText className="w-7 h-7 text-white" />
-              </div>
+    <!-- Header -->
+    <header class="bg-white/90 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-75"></div>
+                    <div class="relative w-12 h-12 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                        <i class="fas fa-file-pdf text-white text-2xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight gradient-text">HelpToDo</h1>
+                    <p class="text-xs font-medium text-purple-600">35+ Professional PDF Tools</p>
+                </div>
             </div>
-            <div>
-              <h1 className={`text-2xl font-black tracking-tight ${darkMode ? 'text-white' : 'bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 bg-clip-text text-transparent'}`}>
-                HelpToDo
-              </h1>
-              <p className={`text-xs font-medium ${darkMode ? 'text-purple-400' : 'text-purple-600'}`}>
-                35+ Professional PDF Tools
-              </p>
-            </div>
-          </div>
-          
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className={`group relative p-3 rounded-xl transition-all duration-300 hover:scale-110 ${
-              darkMode 
-                ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg shadow-yellow-500/50' 
-                : 'bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg shadow-purple-500/50'
-            }`}
-          >
-            {darkMode ? (
-              <Sun className="w-5 h-5 text-white" />
-            ) : (
-              <Moon className="w-5 h-5 text-white" />
-            )}
-          </button>
+            
+            <button id="darkModeToggle" class="p-3 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg hover:scale-110 transition-all">
+                <i class="fas fa-moon text-white"></i>
+            </button>
         </div>
-      </header>
+    </header>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <div className="relative inline-block mb-6">
-          <div className={`absolute inset-0 ${darkMode ? 'bg-blue-600' : 'bg-purple-600'} blur-xl opacity-30 rounded-full`}></div>
-          <div className={`relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full ${
-            darkMode ? 'bg-blue-900/40 text-blue-300 border border-blue-700' : 'bg-white text-purple-700 border border-purple-200'
-          } text-sm font-bold shadow-xl backdrop-blur-sm`}>
-            <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${darkMode ? 'bg-blue-400' : 'bg-purple-600'} opacity-75`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${darkMode ? 'bg-blue-500' : 'bg-purple-600'}`}></span>
-            </span>
-            100% Free • No Sign Up • Privacy First
-          </div>
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div class="relative inline-block mb-6">
+            <div class="absolute inset-0 bg-purple-600 blur-xl opacity-30 rounded-full"></div>
+            <div class="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-purple-700 border border-purple-200 text-sm font-bold shadow-xl">
+                <span class="relative flex h-2 w-2">
+                    <span class="pulse-dot absolute inline-flex h-full w-full rounded-full bg-purple-600 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
+                </span>
+                100% Free • No Sign Up • Privacy First
+            </div>
         </div>
         
-        <h2 className={`text-5xl md:text-7xl font-black mb-6 leading-tight ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          Every PDF Tool
-          <br />
-          <span className={`bg-gradient-to-r ${darkMode ? 'from-blue-400 via-purple-400 to-pink-400' : 'from-blue-600 via-purple-600 to-pink-600'} bg-clip-text text-transparent`}>
-            You'll Ever Need
-          </span>
+        <h2 class="text-5xl md:text-7xl font-black mb-6 leading-tight text-gray-900">
+            Every PDF Tool<br>
+            <span class="gradient-text">You'll Ever Need</span>
         </h2>
         
-        <p className={`text-xl mb-14 max-w-3xl mx-auto leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-          Transform, edit, compress, merge, and secure your PDF files with powerful browser-based tools. All processing happens locally for maximum privacy and speed.
+        <p class="text-xl mb-14 max-w-3xl mx-auto leading-relaxed text-gray-700">
+            Transform, edit, compress, merge, and secure your PDF files with powerful browser-based tools. All processing happens locally for maximum privacy and speed.
         </p>
 
-        {/* Upload Area - Enhanced */}
-        <div
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          className={`max-w-3xl mx-auto mb-16 transition-all duration-300 ${dragActive ? 'scale-105' : 'scale-100'}`}
-        >
-          <label className={`group block cursor-pointer relative rounded-3xl p-12 border-2 border-dashed transition-all duration-300 overflow-hidden ${
-            dragActive 
-              ? darkMode 
-                ? 'border-blue-500 bg-blue-900/20 shadow-2xl shadow-blue-500/20' 
-                : 'border-purple-500 bg-purple-50 shadow-2xl shadow-purple-500/20'
-              : darkMode 
-                ? 'border-gray-700 bg-gray-800/50 hover:border-gray-600 hover:bg-gray-800/70' 
-                : 'border-gray-300 bg-white hover:border-purple-400 hover:shadow-2xl'
-          }`}>
-            <input
-              type="file"
-              className="hidden"
-              onChange={handleFileChange}
-              accept=".pdf,image/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
-            />
+        <!-- Upload Area -->
+        <div id="uploadArea" class="upload-area max-w-3xl mx-auto mb-16 cursor-pointer rounded-3xl p-12 border-2 border-dashed border-gray-300 bg-white hover:shadow-2xl hover:border-purple-400">
+            <input type="file" id="fileInput" class="hidden" accept=".pdf,image/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
             
-            <div className="flex flex-col items-center gap-4 relative z-10">
-              <div className={`relative w-20 h-20 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-                dragActive 
-                  ? darkMode ? 'bg-blue-600 scale-110 rotate-12' : 'bg-purple-600 scale-110 rotate-12'
-                  : darkMode ? 'bg-blue-900/50 group-hover:bg-blue-800' : 'bg-gradient-to-br from-purple-100 to-pink-100 group-hover:from-purple-200 group-hover:to-pink-200'
-              }`}>
-                <Upload className={`w-10 h-10 transition-colors ${
-                  dragActive ? 'text-white' : darkMode ? 'text-blue-400' : 'text-purple-600'
-                }`} />
-              </div>
-              
-              {selectedFile ? (
-                <div className="text-center space-y-2">
-                  <p className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    📄 {selectedFile.name}
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB • Ready to process
-                  </p>
-                  <button 
-                    onClick={(e) => { e.preventDefault(); setSelectedFile(null); }}
-                    className={`mt-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      darkMode ? 'bg-red-900/50 text-red-300 hover:bg-red-900' : 'bg-red-100 text-red-700 hover:bg-red-200'
-                    }`}
-                  >
-                    Clear File
-                  </button>
+            <div class="flex flex-col items-center gap-4">
+                <div class="w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100">
+                    <i class="fas fa-cloud-upload-alt text-purple-600 text-4xl"></i>
                 </div>
-              ) : (
-                <div className="text-center space-y-2">
-                  <p className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    Drag & Drop Files
-                  </p>
-                  <p className={`text-base ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    or click to browse
-                  </p>
-                  <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'} pt-2`}>
-                    PDF • Word • Excel • PowerPoint • Images (Max 100MB)
-                  </p>
+                
+                <div id="fileInfo" class="text-center hidden">
+                    <p class="text-xl font-bold text-gray-900" id="fileName">📄 document.pdf</p>
+                    <p class="text-sm text-gray-600" id="fileSize">2.45 MB • Ready to process</p>
+                    <button id="clearFile" class="mt-2 px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-700 hover:bg-red-200">
+                        Clear File
+                    </button>
                 </div>
-              )}
-            </div>
-            
-            {/* Animated background effect */}
-            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
-              darkMode ? 'bg-gradient-to-r from-blue-900/10 via-purple-900/10 to-pink-900/10' : 'bg-gradient-to-r from-blue-50/50 via-purple-50/50 to-pink-50/50'
-            }`}></div>
-          </label>
-        </div>
-      </section>
 
-      {/* All Tools by Category */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {toolCategories.map((category, catIndex) => (
-          <div key={catIndex} className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <div className={`w-2 h-12 rounded-full bg-gradient-to-b ${darkMode ? 'from-blue-500 to-purple-500' : 'from-blue-600 to-purple-600'} shadow-lg`}></div>
-              <h3 className={`text-3xl font-black ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {category.category}
-              </h3>
+                <div id="uploadPrompt" class="text-center">
+                    <p class="text-xl font-bold text-gray-900 mb-1">Drag & Drop Files</p>
+                    <p class="text-base text-gray-600">or click to browse</p>
+                    <p class="text-sm text-gray-500 pt-2">PDF • Word • Excel • PowerPoint • Images (Max 100MB)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <!-- Convert PDF -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-2 h-12 rounded-full bg-gradient-to-b from-blue-600 to-purple-600 shadow-lg"></div>
+                <h3 class="text-3xl font-black text-gray-900">Convert PDF</h3>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {category.tools.map((tool, index) => (
-                <button
-                  key={index}
-                  className={`group relative ${
-                    darkMode ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-white hover:shadow-2xl'
-                  } rounded-2xl p-6 transition-all duration-300 hover:-translate-y-2 border ${
-                    darkMode ? 'border-gray-700 hover:border-gray-600' : 'border-gray-200 hover:border-purple-300'
-                  } text-left overflow-hidden`}
-                >
-                  {/* Hover gradient effect */}
-                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-br ${tool.color}`}></div>
-                  
-                  <div className="relative flex items-start gap-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${tool.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`}>
-                      <tool.icon className="w-7 h-7 text-white" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-word text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to Word</h4>
+                            <p class="text-sm text-gray-600">Convert PDF to DOCX format</p>
+                        </div>
                     </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className={`font-bold text-lg mb-1.5 ${darkMode ? 'text-white' : 'text-gray-900'} truncate`}>
-                        {tool.name}
-                      </h4>
-                      
-                      <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'} line-clamp-2 leading-relaxed`}>
-                        {tool.desc}
-                      </p>
-                    </div>
-                  </div>
                 </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
 
-      {/* Stats Section - Enhanced */}
-      <section className={`relative ${darkMode ? 'bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900' : 'bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600'} py-20 overflow-hidden`}>
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-10 text-center text-white">
-            <div className="transform hover:scale-110 transition-transform">
-              <div className="text-5xl font-black mb-3">35+</div>
-              <p className="text-lg opacity-90 font-medium">PDF Tools</p>
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-excel text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to Excel</h4>
+                            <p class="text-sm text-gray-600">Convert PDF to XLSX format</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-powerpoint text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to PowerPoint</h4>
+                            <p class="text-sm text-gray-600">Convert PDF to PPTX format</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to JPG</h4>
+                            <p class="text-sm text-gray-600">Convert PDF pages to JPG images</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to PNG</h4>
+                            <p class="text-sm text-gray-600">Convert PDF pages to PNG images</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to BMP</h4>
+                            <p class="text-sm text-gray-600">Convert PDF pages to BMP images</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to TIFF</h4>
+                            <p class="text-sm text-gray-600">Convert PDF pages to TIFF images</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-alt text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PDF to TXT</h4>
+                            <p class="text-sm text-gray-600">Extract text from PDF</p>
+                        </div>
+                    </div>
+                </button>
             </div>
-            <div className="transform hover:scale-110 transition-transform">
-              <div className="text-5xl font-black mb-3">100%</div>
-              <p className="text-lg opacity-90 font-medium">Free Forever</p>
-            </div>
-            <div className="transform hover:scale-110 transition-transform">
-              <div className="text-5xl font-black mb-3">🔒</div>
-              <p className="text-lg opacity-90 font-medium">Secure & Private</p>
-            </div>
-            <div className="transform hover:scale-110 transition-transform">
-              <div className="text-5xl font-black mb-3">⚡</div>
-              <p className="text-lg opacity-90 font-medium">Lightning Fast</p>
-            </div>
-          </div>
         </div>
-      </section>
 
-      {/* Features - Enhanced */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className={`group ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'} rounded-2xl p-8 border hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <h3 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Privacy First
-            </h3>
-            <p className={`text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              All files are processed locally in your browser. Your documents never leave your device.
-            </p>
-          </div>
-
-          <div className={`group ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'} rounded-2xl p-8 border hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg">
-              <Zap className="w-8 h-8 text-white" />
-            </div>
-            <h3 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Super Fast
-            </h3>
-            <p className={`text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Instant processing with no waiting. Handle multiple files simultaneously with ease.
-            </p>
-          </div>
-
-          <div className={`group ${darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'} rounded-2xl p-8 border hover:shadow-2xl transition-all duration-300 hover:-translate-y-2`}>
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg">
-              <Files className="w-8 h-8 text-white" />
-            </div>
-            <h3 className={`text-2xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              All Formats
-            </h3>
-            <p className={`text-base leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Support for PDF, Word, Excel, PowerPoint, and all major image formats.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer - Enhanced */}
-      <footer className={`${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} border-t py-10 mt-10`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <span className={`font-black text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  HelpToDo
-                </span>
-                <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>
-                  Professional PDF Tools
-                </p>
-              </div>
+        <!-- Convert to PDF -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-2 h-12 rounded-full bg-gradient-to-b from-blue-600 to-purple-600 shadow-lg"></div>
+                <h3 class="text-3xl font-black text-gray-900">Convert to PDF</h3>
             </div>
             
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              © 2025 HelpToDo. All rights reserved.
-            </p>
-            
-            <div className="flex gap-6 text-sm font-medium">
-              <a href="#" className={`hover:underline transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}>Privacy</a>
-              <a href="#" className={`hover:underline transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}>Terms</a>
-              <a href="#" className={`hover:underline transition-colors ${darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}>Contact</a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-word text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Word to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert DOCX to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-excel text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Excel to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert XLSX to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-600 to-red-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-powerpoint text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PowerPoint to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert PPTX to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">JPG to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert JPG images to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">PNG to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert PNG images to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">BMP to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert BMP images to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-image text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">TIFF to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert TIFF images to PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-file-alt text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">TXT to PDF</h4>
+                            <p class="text-sm text-gray-600">Convert text files to PDF</p>
+                        </div>
+                    </div>
+                </button>
             </div>
-          </div>
         </div>
-      </footer>
-    </div>
-  );
-}
+
+        <!-- Edit & Organize -->
+        <div class="mb-16">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-2 h-12 rounded-full bg-gradient-to-b from-blue-600 to-purple-600 shadow-lg"></div>
+                <h3 class="text-3xl font-black text-gray-900">Edit & Organize</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-copy text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Merge PDF</h4>
+                            <p class="text-sm text-gray-600">Combine multiple PDFs into one</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-cut text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Split PDF</h4>
+                            <p class="text-sm text-gray-600">Split PDF into multiple files</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-sync text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Rotate PDF</h4>
+                            <p class="text-sm text-gray-600">Rotate pages in your PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-sort text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Organize PDF</h4>
+                            <p class="text-sm text-gray-600">Rearrange and sort PDF pages</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-trash text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Remove Pages</h4>
+                            <p class="text-sm text-gray-600">Delete unwanted pages from PDF</p>
+                        </div>
+                    </div>
+                </button>
+
+                <button class="tool-card bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-2xl text-left">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-lime-500 to-green-500 flex items-center justify-center shadow-lg">
+                            <i class="fas fa-expand text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1 text-gray-900">Extract Pages</h4>
+                            <p class="text-sm text-gray-600">Extract specific pages from PDF</p>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Security & More Tools (add more sections as needed) -->
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-10 text-center text-white">
+                <div class="transform hover:scale-110 transition-transform">
+                    <div class="text-5xl font-black mb-3">35+</div>
+                    <p class="text-lg opacity-90 font-medium">PDF Tools</p>
+                </div>
+                <div class="transform hover:scale-110 transition-transform">
+                    <div class="text-5xl font-black mb-3">100%</div>
+                    <p class="text-lg opacity-90 font-medium">Free Forever</p>
+                </div>
+                <div class="transform hover:scale-110 transition-transform">
+                    <div class="text-5xl font-black mb-3">🔒</div>
+                    <p class="text-lg opacity-90 font-medium">Secure & Private</p>
+                </div>
+                <div class="transform hover:scale-110 transition-transform">
+                    <div class="text-5xl font-black mb-3">⚡</div>
+                    <p class="text-lg opacity-90 font-medium">Lightning Fast</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-10 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-file-pdf text-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-black text-lg text-gray-900">HelpToDo</span>
+                        <p class="text-xs text-gray-600">Professional PDF Tools</p>
+                    </div>
+                </div>
+                
+                <p class="text-sm text-gray-600">© 2025 HelpToDo. All rights reserved.</p>
+                
+                <div class="flex gap-6 text-sm font-medium">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 hover:underline">Privacy</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 hover:underline">Terms</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 hover:underline">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // File upload functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const clearFile = document.getElementById('clearFile');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                fileName.textContent = `📄 ${file.name}`;
+                fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB • Ready to process`;
+                fileInfo.classList.remove('hidden');
+                uploadPrompt.classList.add('hidden');
+            }
+        });
+
+        clearFile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.value = '';
+            fileInfo.classList.add('hidden');
+            uploadPrompt.classList.remove('hidden');
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-active');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-active');
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-active');
+            
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = `📄 ${file.name}`;
+                fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB • Ready to process`;
+                fileInfo.classList.remove('hidden');
+                uploadPrompt.classList.add('hidden');
+            }
+        });
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        let isDark = false;
+
+        darkModeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            document.body.classList.toggle('dark');
+            
+            if (isDark) {
+                document.body.className = 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen';
+                darkModeToggle.innerHTML = '<i class="fas fa-sun text-white"></i>';
+                darkModeToggle.className = 'p-3 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg hover:scale-110 transition-all';
+            } else {
+                document.body.className = 'bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen';
+                darkModeToggle.innerHTML = '<i class="fas fa-moon text-white"></i>';
+                darkModeToggle.className = 'p-3 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-lg hover:scale-110 transition-all';
+            }
+        });
+
+        // Tool card click handlers
+        document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const toolName = this.querySelector('h4').textContent;
+                alert(`Opening ${toolName} tool...\n\nYou'll connect this to your backend!`);
+            });
+        });
+    </script>
+</body>
+</html
