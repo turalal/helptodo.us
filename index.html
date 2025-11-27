@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Heart, Sparkles, Wind, CloudRain } from 'lucide-react';
+import { Send, Heart } from 'lucide-react';
 
 export default function VentRelax() {
   const [ventText, setVentText] = useState('');
@@ -7,46 +7,14 @@ export default function VentRelax() {
   const [loading, setLoading] = useState(false);
 
   const relaxationActions = [
-    {
-      title: "Deep Breathing",
-      instruction: "Close your eyes. Breathe in slowly for 4 counts, hold for 4, breathe out for 6. Repeat 3 times.",
-      icon: Wind
-    },
-    {
-      title: "Body Scan",
-      instruction: "Starting from your toes, slowly notice each part of your body moving upward. Release tension as you go.",
-      icon: Sparkles
-    },
-    {
-      title: "Grounding Exercise",
-      instruction: "Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, and 1 you can taste.",
-      icon: CloudRain
-    },
-    {
-      title: "Shoulder Release",
-      instruction: "Raise your shoulders to your ears, hold for 5 seconds, then drop them completely. Repeat 3 times.",
-      icon: Wind
-    },
-    {
-      title: "Gentle Stretch",
-      instruction: "Stand up slowly. Reach your arms overhead, interlace your fingers, and stretch upward for 10 seconds.",
-      icon: Sparkles
-    },
-    {
-      title: "Mindful Moment",
-      instruction: "Place one hand on your heart, one on your belly. Feel them rise and fall with 5 slow, gentle breaths.",
-      icon: Heart
-    },
-    {
-      title: "Progressive Relaxation",
-      instruction: "Tense your fists for 5 seconds, then release. Feel the difference between tension and relaxation.",
-      icon: Wind
-    },
-    {
-      title: "Safe Space Visualization",
-      instruction: "Close your eyes and imagine your favorite peaceful place. Notice the colors, sounds, and how safe you feel there.",
-      icon: CloudRain
-    }
+    "Before you scroll away, place one hand on your chest, take 3 slow breaths, and just notice it rising and falling.",
+    "Unclench your jaw, lower your shoulders, and gently roll them back 3 times.",
+    "Look around and quietly name 3 things you can see and 2 things you can hear. Let your mind anchor to the present for a moment.",
+    "Close your eyes for 30 seconds and imagine a place where you felt completely safe and at peace.",
+    "Stand up, stretch your arms up high, and take one deep breath. Then slowly release and let your arms fall.",
+    "Press your feet firmly into the ground and notice the support beneath you for a few moments.",
+    "Cup your hands over your eyes and rest in darkness for 5 slow breaths.",
+    "Gently shake out your hands for 10 seconds, releasing any tension you're holding."
   ];
 
   const getCrisisKeywords = (text) => {
@@ -60,14 +28,11 @@ export default function VentRelax() {
 
     setLoading(true);
     
+    // Check for crisis content
     if (getCrisisKeywords(ventText)) {
       setResponse({
         empathy: "I hear that you're in a really dark place right now, and I want you to know that your pain is real. But this is beyond what this space can offer.",
-        action: {
-          title: "Please Seek Help",
-          instruction: "Please reach out to someone who can truly help: call a crisis hotline (988 in the US), text a crisis line, or go to your nearest emergency room. You deserve real support right now.",
-          icon: Heart
-        },
+        action: "Please reach out to someone who can truly help: call a crisis hotline, text a crisis line, or go to your nearest emergency room. You deserve real support right now.",
         isCrisis: true
       });
       setLoading(false);
@@ -130,141 +95,91 @@ Format your response as plain text, starting with the empathetic reflection. Do 
     setResponse(null);
   };
 
-  const ActionIcon = response ? response.action.icon : null;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      </div>
-
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4 py-12">
-        <div className="max-w-3xl w-full">
-          {!response ? (
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-12 border border-white/50">
-              <div className="text-center mb-10">
-                <div className="inline-block mb-6 relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                  <div className="relative p-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full">
-                    <Heart className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-                <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-                  Write it out. Let it go.
-                </h1>
-                <p className="text-gray-600 text-xl mb-2">
-                  Then breathe.
-                </p>
-                <p className="text-gray-500 text-sm">
-                  No account • No tracking • Just peace
-                </p>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full">
+        {!response ? (
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12">
+            <div className="text-center mb-8">
+              <div className="inline-block p-3 bg-purple-100 rounded-full mb-4">
+                <Heart className="w-8 h-8 text-purple-600" />
               </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+                Write it out. Let it go.
+              </h1>
+              <p className="text-gray-600 text-lg">
+                No account. No tracking. Just a space to unload your thoughts.
+              </p>
+            </div>
 
-              <div className="mb-8">
-                <div className="relative">
-                  <textarea
-                    value={ventText}
-                    onChange={(e) => setVentText(e.target.value)}
-                    placeholder="What's weighing on you today? Let it all out..."
-                    className="w-full h-72 p-8 text-lg border-2 border-purple-200/50 rounded-3xl focus:outline-none focus:border-purple-400 resize-none bg-white/60 placeholder-gray-400 backdrop-blur-sm transition-all duration-300 shadow-inner"
-                    disabled={loading}
-                  />
-                  <div className="absolute bottom-6 right-6 text-sm text-gray-400">
-                    {ventText.length} characters
-                  </div>
-                </div>
+            <div className="mb-6">
+              <textarea
+                value={ventText}
+                onChange={(e) => setVentText(e.target.value)}
+                placeholder="What's weighing on you today?"
+                className="w-full h-64 p-6 text-lg border-2 border-purple-200 rounded-2xl focus:outline-none focus:border-purple-400 resize-none bg-white/50 placeholder-gray-400"
+                disabled={loading}
+              />
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              disabled={!ventText.trim() || loading}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 px-8 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+            >
+              {loading ? (
+                <span>Listening...</span>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Send & get a gentle response
+                </>
+              )}
+            </button>
+
+            <div className="mt-8 text-center text-sm text-gray-500 border-t border-gray-200 pt-6">
+              <p className="mb-2">
+                <strong>This is not a crisis service or therapy.</strong>
+              </p>
+              <p>
+                If you're in danger or thinking of harming yourself, please contact local emergency or crisis services immediately.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 md:p-12">
+            <div className="text-center mb-8">
+              <div className="inline-block p-3 bg-green-100 rounded-full mb-4">
+                <Heart className="w-8 h-8 text-green-600" />
               </div>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">
+                {response.isCrisis ? "Please seek help" : "You've been heard"}
+              </h2>
+            </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={!ventText.trim() || loading}
-                className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white py-5 px-8 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl hover:scale-105 transform"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Listening with care...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Send & receive peace
-                  </>
-                )}
-              </button>
-
-              <div className="mt-10 text-center text-sm text-gray-500 border-t border-gray-200/50 pt-8 space-y-2">
-                <p className="flex items-center justify-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  <strong>This is not a crisis service or therapy.</strong>
-                </p>
-                <p className="text-xs max-w-lg mx-auto">
-                  If you're in danger or thinking of harming yourself, please contact local emergency services or call 988 (US Suicide & Crisis Lifeline) immediately.
+            <div className={`mb-8 p-6 ${response.isCrisis ? 'bg-red-50 border-2 border-red-200' : 'bg-purple-50 border-2 border-purple-200'} rounded-2xl`}>
+              <p className="text-gray-700 text-lg leading-relaxed mb-4">
+                {response.empathy}
+              </p>
+              <div className={`mt-6 pt-6 border-t ${response.isCrisis ? 'border-red-200' : 'border-purple-200'}`}>
+                <p className="text-gray-600 italic">
+                  {response.action}
                 </p>
               </div>
             </div>
-          ) : (
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-12 border border-white/50">
-              <div className="text-center mb-10">
-                <div className="inline-block mb-6 relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
-                  <div className="relative p-4 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full">
-                    <Heart className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
-                  {response.isCrisis ? "Please seek help" : "You've been heard"}
-                </h2>
-                <p className="text-gray-600">
-                  {response.isCrisis ? "You deserve professional support" : "Now, let's help you breathe"}
-                </p>
-              </div>
 
-              <div className={`mb-8 p-8 ${response.isCrisis ? 'bg-red-50/80' : 'bg-gradient-to-br from-purple-50/80 to-pink-50/80'} backdrop-blur-sm rounded-3xl border-2 ${response.isCrisis ? 'border-red-200' : 'border-purple-200/50'} shadow-lg`}>
-                <p className="text-gray-700 text-lg leading-relaxed mb-6">
-                  {response.empathy}
-                </p>
-              </div>
+            <button
+              onClick={handleReset}
+              className="w-full bg-gray-100 text-gray-700 py-4 px-8 rounded-2xl font-semibold text-lg hover:bg-gray-200 transition-all"
+            >
+              Write something else
+            </button>
 
-              <div className={`mb-8 p-8 ${response.isCrisis ? 'bg-red-100/80' : 'bg-gradient-to-br from-blue-50/80 to-indigo-50/80'} backdrop-blur-sm rounded-3xl border-2 ${response.isCrisis ? 'border-red-300' : 'border-blue-200/50'} shadow-lg`}>
-                <div className="flex items-center gap-3 mb-4">
-                  {ActionIcon && <ActionIcon className={`w-8 h-8 ${response.isCrisis ? 'text-red-600' : 'text-blue-600'}`} />}
-                  <h3 className={`text-2xl font-bold ${response.isCrisis ? 'text-red-700' : 'text-blue-700'}`}>
-                    {response.action.title}
-                  </h3>
-                </div>
-                <p className="text-gray-700 text-lg leading-relaxed">
-                  {response.action.instruction}
-                </p>
-                {!response.isCrisis && (
-                  <div className="mt-6 pt-6 border-t border-blue-200/50">
-                    <p className="text-sm text-gray-600 italic">
-                      Take your time. There's no rush. Just be gentle with yourself.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  onClick={handleReset}
-                  className="flex-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 py-5 px-8 rounded-2xl font-semibold text-lg hover:from-gray-200 hover:to-gray-300 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
-                >
-                  Write something else
-                </button>
-              </div>
-
-              <div className="mt-10 text-center text-sm text-gray-500 space-y-2">
-                <p className="flex items-center justify-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Take care of yourself. You deserve gentleness.
-                </p>
-              </div>
+            <div className="mt-8 text-center text-sm text-gray-500">
+              <p>Take care of yourself. You deserve gentleness.</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
