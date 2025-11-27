@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HelpToDo – Vent & Relax</title>
+    <title>HelpToDo - Vent and Relax</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes pulse-slow {
+        @keyframes pulseSlow {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 0.5; }
         }
-        .animate-pulse-slow {
-            animation: pulse-slow 6s ease-in-out infinite;
+        .pulse-slow {
+            animation: pulseSlow 6s ease-in-out infinite;
         }
-        .animate-pulse-slow-delay {
-            animation: pulse-slow 6s ease-in-out infinite;
+        .pulse-slow-delay {
+            animation: pulseSlow 6s ease-in-out infinite;
             animation-delay: 2s;
         }
-        .animate-pulse-slow-delay-2 {
-            animation: pulse-slow 6s ease-in-out infinite;
+        .pulse-slow-delay-2 {
+            animation: pulseSlow 6s ease-in-out infinite;
             animation-delay: 4s;
         }
-        @keyframes spin {
+        @keyframes spinner {
             to { transform: rotate(360deg); }
         }
-        .animate-spin {
-            animation: spin 1s linear infinite;
+        .spinner {
+            animation: spinner 1s linear infinite;
         }
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, sans-serif;
         }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-    <!-- Floating ambient elements -->
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow"></div>
-        <div class="absolute top-40 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow-delay"></div>
-        <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-slow-delay-2"></div>
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pulse-slow"></div>
+        <div class="absolute top-40 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pulse-slow-delay"></div>
+        <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pulse-slow-delay-2"></div>
     </div>
 
-    <!-- Main container -->
     <div class="relative z-10 flex items-center justify-center min-h-screen p-4 py-12">
         <div class="max-w-3xl w-full">
-            <!-- Initial View -->
             <div id="ventView" class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-12 border border-white/50">
                 <div class="text-center mb-10">
                     <div class="inline-block mb-6 relative">
@@ -101,7 +98,6 @@
                 </div>
             </div>
 
-            <!-- Response View -->
             <div id="responseView" class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-12 border border-white/50 hidden">
                 <div class="text-center mb-10">
                     <div class="inline-block mb-6 relative">
@@ -113,10 +109,10 @@
                         </div>
                     </div>
                     <h2 id="responseTitle" class="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
-                        You've been heard
+                        You have been heard
                     </h2>
                     <p id="responseSubtitle" class="text-gray-600">
-                        Now, let's help you breathe
+                        Now let us help you breathe
                     </p>
                 </div>
 
@@ -134,7 +130,7 @@
                     <p id="actionInstruction" class="text-gray-700 text-lg leading-relaxed"></p>
                     <div id="gentleReminder" class="mt-6 pt-6 border-t border-blue-200/50">
                         <p class="text-sm text-gray-600 italic">
-                            Take your time. There's no rush. Just be gentle with yourself.
+                            Take your time. There is no rush. Just be gentle with yourself.
                         </p>
                     </div>
                 </div>
@@ -161,7 +157,7 @@
     </div>
 
     <script>
-        const relaxationActions = [
+        var relaxationActions = [
             {
                 title: "Deep Breathing",
                 instruction: "Close your eyes. Breathe in slowly for 4 counts, hold for 4, breathe out for 6. Repeat 3 times."
@@ -196,34 +192,33 @@
             }
         ];
 
-        const ventText = document.getElementById('ventText');
-        const charCount = document.getElementById('charCount');
-        const submitBtn = document.getElementById('submitBtn');
-        const ventView = document.getElementById('ventView');
-        const responseView = document.getElementById('responseView');
-        const resetBtn = document.getElementById('resetBtn');
+        var ventText = document.getElementById('ventText');
+        var charCount = document.getElementById('charCount');
+        var submitBtn = document.getElementById('submitBtn');
+        var ventView = document.getElementById('ventView');
+        var responseView = document.getElementById('responseView');
+        var resetBtn = document.getElementById('resetBtn');
 
-        ventText.addEventListener('input', (e) => {
-            const count = e.target.value.length;
-            charCount.textContent = `${count} characters`;
+        ventText.addEventListener('input', function(e) {
+            var count = e.target.value.length;
+            charCount.textContent = count + ' characters';
             submitBtn.disabled = count === 0;
         });
 
         function getCrisisKeywords(text) {
-            const lowerText = text.toLowerCase();
-            const crisisWords = ['kill myself', 'suicide', 'end my life', 'want to die', 'harm myself', 'hurt myself'];
-            return crisisWords.some(word => lowerText.includes(word));
+            var lowerText = text.toLowerCase();
+            var crisisWords = ['kill myself', 'suicide', 'end my life', 'want to die', 'harm myself', 'hurt myself'];
+            return crisisWords.some(function(word) {
+                return lowerText.indexOf(word) !== -1;
+            });
         }
 
-        submitBtn.addEventListener('click', async () => {
-            const text = ventText.value.trim();
+        submitBtn.addEventListener('click', function() {
+            var text = ventText.value.trim();
             if (!text) return;
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `
-                <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>Listening with care...</span>
-            `;
+            submitBtn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner"></div><span>Listening with care...</span>';
 
             if (getCrisisKeywords(text)) {
                 showResponse(
@@ -237,52 +232,43 @@
                 return;
             }
 
-            try {
-                const response = await fetch("https://api.anthropic.com/v1/messages", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        model: "claude-sonnet-4-20250514",
-                        max_tokens: 1000,
-                        messages: [{
-                            role: "user",
-                            content: `You are a compassionate, non-judgmental listener for an anonymous venting platform. A person has shared the following:
-
-"${text}"
-
-Respond with:
-1. A SHORT empathetic reflection (1-3 sentences) that validates their feelings and normalizes their struggle. Be warm and understanding, never clinical or preachy. Never give advice about life decisions.
-2. Keep it brief and digestible - people are tired.
-
-Format your response as plain text, starting with the empathetic reflection. Do not include any labels, headers, or formatting markers.`
-                        }]
-                    })
-                });
-
-                const data = await response.json();
-                const empathyText = data.content
-                    .filter(item => item.type === "text")
-                    .map(item => item.text)
+            fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    model: "claude-sonnet-4-20250514",
+                    max_tokens: 1000,
+                    messages: [{
+                        role: "user",
+                        content: "You are a compassionate, non-judgmental listener for an anonymous venting platform. A person has shared the following:\n\n\"" + text + "\"\n\nRespond with:\n1. A SHORT empathetic reflection (1-3 sentences) that validates their feelings and normalizes their struggle. Be warm and understanding, never clinical or preachy. Never give advice about life decisions.\n2. Keep it brief and digestible - people are tired.\n\nFormat your response as plain text, starting with the empathetic reflection. Do not include any labels, headers, or formatting markers."
+                    }]
+                })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                var empathyText = data.content
+                    .filter(function(item) { return item.type === "text"; })
+                    .map(function(item) { return item.text; })
                     .join("\n")
                     .trim();
 
-                const randomAction = relaxationActions[Math.floor(Math.random() * relaxationActions.length)];
+                var randomAction = relaxationActions[Math.floor(Math.random() * relaxationActions.length)];
                 showResponse(empathyText, randomAction, false);
-
-            } catch (error) {
+            })
+            .catch(function(error) {
                 showResponse(
                     "It sounds like you're carrying something heavy right now. That weight is real, and it makes complete sense that you needed to put it into words.",
                     relaxationActions[0],
                     false
                 );
-            }
+            });
         });
 
         function showResponse(empathy, action, isCrisis) {
-            document.getElementById('responseTitle').textContent = isCrisis ? "Please seek help" : "You've been heard";
-            document.getElementById('responseSubtitle').textContent = isCrisis ? "You deserve professional support" : "Now, let's help you breathe";
+            document.getElementById('responseTitle').textContent = isCrisis ? "Please seek help" : "You have been heard";
+            document.getElementById('responseSubtitle').textContent = isCrisis ? "You deserve professional support" : "Now let us help you breathe";
             document.getElementById('empathyText').textContent = empathy;
             document.getElementById('actionTitle').textContent = action.title;
             document.getElementById('actionInstruction').textContent = action.instruction;
@@ -305,16 +291,11 @@ Format your response as plain text, starting with the empathetic reflection. Do 
             responseView.classList.remove('hidden');
         }
 
-        resetBtn.addEventListener('click', () => {
+        resetBtn.addEventListener('click', function() {
             ventText.value = '';
             charCount.textContent = '0 characters';
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                </svg>
-                <span>Send & receive peace</span>
-            `;
+            submitBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg><span>Send & receive peace</span>';
             ventView.classList.remove('hidden');
             responseView.classList.add('hidden');
         });
